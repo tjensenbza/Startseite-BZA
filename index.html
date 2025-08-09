@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weiterleitungs-Seite</title>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007BFF;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Wähle dein Ziel</h1>
+  <div class="button-container" id="buttonContainer"></div>
+
+  <script>
+    // Supabase Konfiguration
+    const supabaseUrl = "https://fdsedmqvonfsegyfvqwq.supabase.co"; // Dein Supabase Projekt-URL
+    const supabaseKey = "ANON_PUBLIC_KEY_HIER_EINFÜGEN"; // Anon-Key aus Supabase Settings
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function loadLinks() {
+      const { data, error } = await supabaseClient
+        .from("links")
+        .select("*")
+        .order("order_nr", { ascending: true });
+
+      if (error) {
+        console.error("Fehler beim Laden:", error);
+        return;
+      }
+
+      const container = document.getElementById("buttonContainer");
+      container.innerHTML = "";
+
+      data.forEach(link => {
+        const btn = document.createElement("button");
+        btn.textContent = link.title;
+        btn.onclick = () => window.location.href = link.url;
+        container.appendChild(btn);
+      });
+    }
+
+    loadLinks();
+  </script>
+</body>
+</html>
